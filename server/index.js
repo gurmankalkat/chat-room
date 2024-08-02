@@ -23,10 +23,20 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser()) ;
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
+
+// Add a route to fetch messages
+app.get("/api/messages", async (req, res) => {
+  try {
+    const messages = await MessageModel.find().sort({ createdAt: 1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch messages" });
+  }
+});
 
 const port = 8000;
 const server = app.listen(port, () => {
@@ -72,12 +82,6 @@ wss.on("connection", (connection, req) => {
           id: messageDoc._id
         }));
       });
-      // Send the message back to the sender to confirm receipt
-      connection.send(JSON.stringify({
-        sender: connection.username,
-        text,
-        id: messageDoc._id
-      }));
     }
   });
 

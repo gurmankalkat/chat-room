@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation"; 
+import axios from "axios";
 
 export default function Chat() {
     const searchParams = useSearchParams();
@@ -33,6 +34,17 @@ export default function Chat() {
         return () => {
             websocket.close();
         };
+    }, []);
+
+    useEffect(() => {
+        axios.get("http://localhost:8000/api/messages") // Corrected endpoint
+            .then(response => {
+                const { data } = response;
+                setMessages(data);
+            })
+            .catch(error => {
+                console.error("Error fetching messages:", error);
+            });
     }, []);
 
     function handleMessage(event: MessageEvent) {
