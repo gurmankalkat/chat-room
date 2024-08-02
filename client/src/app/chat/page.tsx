@@ -70,10 +70,10 @@ export default function Chat() {
 
     return (
         <div className="flex h-screen p-4 space-x-4">
-            <div className="w-1/3">
+            <div className="w-1/4">
                 <Card className="h-full">
                     <CardHeader>
-                        <CardTitle>Conversations</CardTitle>
+                        <CardTitle>People Online</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col space-y-2">
                         {onlinePeopleExclude.map(person => (
@@ -84,12 +84,12 @@ export default function Chat() {
                     </CardContent>
                 </Card>
             </div>
-            <div className="w-2/3">
+            <div className="w-3/4">
                 <Card className="h-full flex flex-col">
                     <CardHeader>
                         <CardTitle>Messages</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-grow">
+                    <CardContent className="flex-grow overflow-y-scroll">
                             <div>
                                 {messages.map((message, index) => (
                                     <div key={index} className={`p-2 space-y-2 ${message.sender === username ? "text-right" : "text-left"}`}>

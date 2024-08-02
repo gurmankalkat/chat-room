@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const ws = require("ws");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const MessageModel = require("./models/message");
 
 const app = express();
 
@@ -54,15 +55,29 @@ wss.on("connection", (connection, req) => {
     }
   }
 
-  connection.on("message", (message) => {
+  connection.on("message", async (message) => {
     const messageData = JSON.parse(message.toString());
     const { text } = messageData;
     const recipients = [...wss.clients].filter(c => c.username !== connection.username);
 
-    if (recipients.length > 0 && text) {
-      recipients.forEach(recipient => {
-        recipient.send(JSON.stringify({ sender: connection.username, text }));
+    if (text) {
+      const messageDoc = await MessageModel.create({
+        sender: connection.username, // Ensure the username is saved as the sender
+        text
       });
+      recipients.forEach(recipient => {
+        recipient.send(JSON.stringify({
+          sender: connection.username,
+          text,
+          id: messageDoc._id
+        }));
+      });
+      // Send the message back to the sender to confirm receipt
+      connection.send(JSON.stringify({
+        sender: connection.username,
+        text,
+        id: messageDoc._id
+      }));
     }
   });
 
