@@ -8,14 +8,14 @@ const jwt = require("jsonwebtoken");
 
 const app = express();
 
-// database connection
+// Database connection
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("Database connected");
 }).catch((err) => {
   console.log(err);
 });
 
-// middleware
+// Middleware
 app.use(cors({
   credentials: true,
   origin: "http://localhost:3000",
@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// routes
+// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 
 const port = 8000;
@@ -34,6 +34,7 @@ const server = app.listen(port, () => {
 
 // WebSocket setup
 const wss = new ws.Server({ server });
+
 wss.on("connection", (connection, req) => {
   const cookies = req.headers.cookie;
   if (cookies) {
@@ -44,9 +45,10 @@ wss.on("connection", (connection, req) => {
         jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
           if (err) throw err;
           console.log(userData);
-          const {userID, username} = userData;
+          const { userID, username } = userData;
           connection.userID = userID;
           connection.username = username;
+          broadcastOnlineUsers();
         });
       }
     }
@@ -54,21 +56,29 @@ wss.on("connection", (connection, req) => {
 
   connection.on("message", (message) => {
     const messageData = JSON.parse(message.toString());
-    const {recipient, text} = messageData;
+    const { recipient, text } = messageData;
     if (recipient && text) {
       [...wss.clients].filter(c => c.username === recipient).forEach(c => {
-        c.send(JSON.stringify({text}));
+        c.send(JSON.stringify({ sender: connection.username, text }));
       });
     }
   });
 
-  
-  [...wss.clients].forEach(client => {
-    client.send(JSON.stringify({
-      online: [...wss.clients].map(c => ({ userID: c.userID, username: c.username }))
-    }));
+  connection.on("close", () => {
+    broadcastOnlineUsers();
   });
 });
+
+// Broadcast the list of online users
+function broadcastOnlineUsers() {
+  const onlineUsers = [...wss.clients]
+    .filter(client => client.username)
+    .map(client => ({ userID: client.userID, username: client.username }));
+
+  [...wss.clients].forEach(client => {
+    client.send(JSON.stringify({ online: onlineUsers }));
+  });
+}
 
 // Debugging middleware to log request cookies
 app.use((req, res, next) => {

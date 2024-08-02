@@ -1,14 +1,13 @@
 "use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation"; 
@@ -19,16 +18,20 @@ export default function Chat() {
 
     const [ws, setWS] = useState<WebSocket | null>(null);
     const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
-    const[onlinePeople, setOnlinePeople] = useState<Set<string>>(new Set());
-    const[newMessage, setNewMessage] = useState<string>("");
-    const[messages, setMessages] = useState<{sender: string, text: string}[]>([]);
+    const [onlinePeople, setOnlinePeople] = useState<Set<string>>(new Set());
+    const [newMessage, setNewMessage] = useState<string>("");
+    const [messages, setMessages] = useState<{sender: string, text: string}[]>([]);
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8000"); // Connect to the correct port
-        ws.onopen = () => {
+        const websocket = new WebSocket("ws://localhost:8000"); // Connect to the correct port
+        websocket.onopen = () => {
             console.log("WebSocket connection established");
-            setWS(ws);
-            ws.addEventListener("message", handleMessage);
+            setWS(websocket);
+        };
+        websocket.onmessage = handleMessage;
+
+        return () => {
+            websocket.close();
         };
     }, []);
 
@@ -37,7 +40,7 @@ export default function Chat() {
         if ("online" in messageData) {
             showOnlinePeople(messageData.online);
         } else {
-            setMessages(prev => ([...prev, {sender: messageData.sender, text: messageData.text, isOur: false}]));
+            setMessages(prev => ([...prev, {sender: messageData.sender, text: messageData.text}]));
             console.log({messageData});
         }
     };
@@ -50,22 +53,23 @@ export default function Chat() {
 
     function handleSelected(person: string) { // Change 'String' to 'string'
         setSelectedPerson(person);
-        console.log(selectedPerson);
+        console.log(person);
     }
 
     function sendMessage(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (ws) {
+        if (ws && selectedPerson && newMessage.trim()) {
             ws.send(JSON.stringify({
                 recipient: selectedPerson,
                 text: newMessage,
             }));
+            setMessages(prev => ([...prev, {sender: username || '', text: newMessage, isOur: true}]));
+            setNewMessage("");
         }
-        setNewMessage("");
-        setMessages(prev => ([...prev, {sender: username || '', text: newMessage, isOur: true}]));
     }
 
     const onlinePeopleExclude = Array.from(onlinePeople).filter(person => person !== username);
+    console.log(onlinePeopleExclude);
 
     return (
         <div className="flex h-screen p-4 space-x-4">
@@ -75,9 +79,9 @@ export default function Chat() {
                         <CardTitle>Conversations</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col space-y-2">
-                        {Array.from(onlinePeopleExclude).map(username => (
-                            <Card key={username} className={`p-4 cursor-pointer ${selectedPerson === username ? "bg-gray-50" : ""}`} onClick={() => handleSelected(username)}>
-                                <CardTitle className="text-sm">{username}</CardTitle>
+                        {onlinePeopleExclude.map(person => (
+                            <Card key={person} className={`p-4 cursor-pointer ${selectedPerson === person ? "bg-gray-50" : ""}`} onClick={() => handleSelected(person)}>
+                                <CardTitle className="text-sm">{person}</CardTitle>
                             </Card>
                         ))}
                     </CardContent>
@@ -90,17 +94,19 @@ export default function Chat() {
                     </CardHeader>
                     <CardContent className="flex-grow">
                         {!selectedPerson && <div className="flex justify-center items-center h-full text-gray-500">Select a contact</div>}
-                        {!!selectedPerson && (
+                        {selectedPerson && (
                             <div>
-                                {messages.map((message) => (
-                                    <div key={message.text}>
-                                        <div>{message.text}</div>
+                                {messages.map((message, index) => (
+                                    <div key={index} className={`p-2 ${message.sender === username ? "text-right" : "text-left"}`}>
+                                        <div className={`inline-block p-2 rounded ${message.sender === username ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
+                                            {message.text}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         )}
                     </CardContent>
-                    {!!selectedPerson && (
+                    {selectedPerson && (
                         <div className="p-4 border-t border-gray-200">
                             <form className="flex flex-row space-x-2" onSubmit={sendMessage}>
                                 <Input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type your message" className="w-full p-2" />
