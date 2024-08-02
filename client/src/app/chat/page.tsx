@@ -24,7 +24,7 @@ export default function Chat() {
     const [messages, setMessages] = useState<{sender: string, text: string}[]>([]);
 
     useEffect(() => {
-        const websocket = new WebSocket("ws://localhost:8000"); // Connect to the correct port
+        const websocket = new WebSocket("ws://localhost:8000");
         websocket.onopen = () => {
             console.log("WebSocket connection established");
             setWS(websocket);
@@ -37,7 +37,7 @@ export default function Chat() {
     }, []);
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/messages") // Corrected endpoint
+        axios.get("http://localhost:8000/api/messages")
             .then(response => {
                 const { data } = response;
                 setMessages(data);
@@ -55,7 +55,7 @@ export default function Chat() {
             setMessages(prev => ([...prev, {sender: messageData.sender, text: messageData.text}]));
             console.log({messageData});
         }
-    };
+    }
 
     function showOnlinePeople(online: {userID: string, username: string}[]) {
         const people = new Set(online.map(person => person.username));
@@ -102,23 +102,23 @@ export default function Chat() {
                         <CardTitle>Messages</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow overflow-y-scroll">
-                            <div>
-                                {messages.map((message, index) => (
-                                    <div key={index} className={`p-2 space-y-2 ${message.sender === username ? "text-right" : "text-left"}`}>
-                                        <div className="text-xs text-gray-500">{message.sender}</div>
-                                        <div className={`inline-block p-2 rounded ${message.sender === username ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
-                                            {message.text}
-                                        </div>
+                        <div>
+                            {messages.map((message, index) => (
+                                <div key={index} className={`p-2 space-y-2 ${message.sender === username ? "text-right" : "text-left"}`}>
+                                    <div className="text-xs text-gray-500">{message.sender}</div>
+                                    <div className={`inline-block p-2 rounded ${message.sender === username ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
+                                        {message.text}
                                     </div>
-                                ))}
-                            </div>
-                    </CardContent>
-                        <div className="p-4 border-t border-gray-200">
-                            <form className="flex flex-row space-x-2" onSubmit={sendMessage}>
-                                <Input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type your message" className="w-full p-2" />
-                                <Button type="submit">Send</Button>
-                            </form>
+                                </div>
+                            ))}
                         </div>
+                    </CardContent>
+                    <div className="p-4 border-t border-gray-200">
+                        <form className="flex flex-row space-x-2" onSubmit={sendMessage}>
+                            <Input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type your message" className="w-full p-2" />
+                            <Button type="submit">Send</Button>
+                        </form>
+                    </div>
                 </Card>
             </div>
         </div>
