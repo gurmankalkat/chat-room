@@ -51,18 +51,15 @@ export default function Chat() {
         setOnlinePeople(people);
     }
 
-    function handleSelected(person: string) { // Change 'String' to 'string'
+    function handleSelected(person: string) {
         setSelectedPerson(person);
         console.log(person);
     }
 
     function sendMessage(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (ws && selectedPerson && newMessage.trim()) {
-            ws.send(JSON.stringify({
-                recipient: selectedPerson,
-                text: newMessage,
-            }));
+        if (ws && newMessage.trim()) {
+            ws.send(JSON.stringify({ text: newMessage }));
             setMessages(prev => ([...prev, {sender: username || '', text: newMessage, isOur: true}]));
             setNewMessage("");
         }
@@ -80,7 +77,7 @@ export default function Chat() {
                     </CardHeader>
                     <CardContent className="flex flex-col space-y-2">
                         {onlinePeopleExclude.map(person => (
-                            <Card key={person} className={`p-4 cursor-pointer ${selectedPerson === person ? "bg-gray-50" : ""}`} onClick={() => handleSelected(person)}>
+                            <Card key={person} className="p-4">
                                 <CardTitle className="text-sm">{person}</CardTitle>
                             </Card>
                         ))}
@@ -93,27 +90,23 @@ export default function Chat() {
                         <CardTitle>Messages</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow">
-                        {!selectedPerson && <div className="flex justify-center items-center h-full text-gray-500">Select a contact</div>}
-                        {selectedPerson && (
                             <div>
                                 {messages.map((message, index) => (
-                                    <div key={index} className={`p-2 ${message.sender === username ? "text-right" : "text-left"}`}>
+                                    <div key={index} className={`p-2 space-y-2 ${message.sender === username ? "text-right" : "text-left"}`}>
+                                        <div className="text-xs text-gray-500">{message.sender}</div>
                                         <div className={`inline-block p-2 rounded ${message.sender === username ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
                                             {message.text}
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                        )}
                     </CardContent>
-                    {selectedPerson && (
                         <div className="p-4 border-t border-gray-200">
                             <form className="flex flex-row space-x-2" onSubmit={sendMessage}>
                                 <Input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type your message" className="w-full p-2" />
                                 <Button type="submit">Send</Button>
                             </form>
                         </div>
-                    )}
                 </Card>
             </div>
         </div>

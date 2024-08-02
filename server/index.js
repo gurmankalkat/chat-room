@@ -56,10 +56,12 @@ wss.on("connection", (connection, req) => {
 
   connection.on("message", (message) => {
     const messageData = JSON.parse(message.toString());
-    const { recipient, text } = messageData;
-    if (recipient && text) {
-      [...wss.clients].filter(c => c.username === recipient).forEach(c => {
-        c.send(JSON.stringify({ sender: connection.username, text }));
+    const { text } = messageData;
+    const recipients = [...wss.clients].filter(c => c.username !== connection.username);
+
+    if (recipients.length > 0 && text) {
+      recipients.forEach(recipient => {
+        recipient.send(JSON.stringify({ sender: connection.username, text }));
       });
     }
   });
