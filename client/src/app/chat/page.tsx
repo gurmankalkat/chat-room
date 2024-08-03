@@ -126,11 +126,11 @@ export default function Chat() {
                                     </div>
                                     <div className={`flex items-center space-x-2 ${message.sender === username ? "justify-end" : "justify-start"}`}>
                                         <button onClick={() => handleUpvote(message._id)}>
-                                            <span>▲</span> {/* Up arrow */}
+                                            <span>▲</span> 
                                         </button>
                                         <span>{message.upvotes}</span>
                                         <button onClick={() => handleDownvote(message._id)}>
-                                            <span>▼</span> {/* Down arrow */}
+                                            <span>▼</span> 
                                         </button>
                                         <span>{message.downvotes}</span>
                                     </div>

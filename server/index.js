@@ -28,7 +28,7 @@ app.use(cookieParser()) ;
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 
-// Add a route to fetch messages
+// Add route to fetch messages
 app.get("/api/messages", async (req, res) => {
   try {
     const messages = await MessageModel.find().sort({ createdAt: 1 });
@@ -72,7 +72,7 @@ wss.on("connection", (connection, req) => {
 
     if (text) {
       const messageDoc = await MessageModel.create({
-        sender: connection.username, // Ensure the username is saved as the sender
+        sender: connection.username, 
         text
       });
       recipients.forEach(recipient => {
@@ -90,7 +90,7 @@ wss.on("connection", (connection, req) => {
   });
 });
 
-// Broadcast the list of online users
+// Broadcast list of online users
 function broadcastOnlineUsers() {
   const onlineUsers = [...wss.clients]
     .filter(client => client.username)
@@ -119,7 +119,6 @@ app.post("/api/messages/:id/downvote", async (req, res) => {
   }
 });
 
-// Debugging middleware to log request cookies
 app.use((req, res, next) => {
   console.log("Request Cookies:", req.cookies);
   next();
