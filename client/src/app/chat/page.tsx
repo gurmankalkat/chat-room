@@ -18,7 +18,6 @@ export default function Chat() {
     const username = searchParams.get("username");
 
     const [ws, setWS] = useState<WebSocket | null>(null);
-    const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
     const [onlinePeople, setOnlinePeople] = useState<Set<string>>(new Set());
     const [newMessage, setNewMessage] = useState<string>("");
     const [messages, setMessages] = useState<{ _id: string; sender: string; text: string; upvotes: number; downvotes: number; }[]>([]);
