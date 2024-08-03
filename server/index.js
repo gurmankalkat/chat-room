@@ -101,6 +101,24 @@ function broadcastOnlineUsers() {
   });
 }
 
+app.post("/api/messages/:id/upvote", async (req, res) => {
+  try {
+    const message = await MessageModel.findByIdAndUpdate(req.params.id, { $inc: { upvotes: 1 } }, { new: true });
+    res.json(message);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to upvote message" });
+  }
+});
+
+app.post("/api/messages/:id/downvote", async (req, res) => {
+  try {
+    const message = await MessageModel.findByIdAndUpdate(req.params.id, { $inc: { downvotes: 1 } }, { new: true });
+    res.json(message);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to downvote message" });
+  }
+});
+
 // Debugging middleware to log request cookies
 app.use((req, res, next) => {
   console.log("Request Cookies:", req.cookies);
