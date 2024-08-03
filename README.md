@@ -3,7 +3,7 @@ A simple chat room application using React, TypeScript, JavaScript, MongoDB, and
 
 ## Running Program
 * Used Mac
-* To see 2+ users having a conversation, open two web browser windows and go to http://localhost:3000 to see chats send in real time
+* To see 2+ users having a conversation, open a web browser window for each user that wants to chat and go to http://localhost:3000 in each window to send chats in real time
   - See video in project directory for details
 
 ### With Docker
@@ -79,6 +79,7 @@ npm run dev
 1. Username: gurman & Password: kalkat
 2. Username: testing & Password: is.fun
 3. Username: robots & Password: are.cool
+
 
 
 
