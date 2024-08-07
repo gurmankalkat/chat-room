@@ -8,7 +8,7 @@ A simple chat room application using React, TypeScript, JavaScript, MongoDB, and
 
 ### With Docker
 1. Open Docker Desktop
-2. Navigate to project directory called my-app
+2. Navigate to project directory called `my-app`
 ```bash
 cd path/to/project/directory
 ```
@@ -20,10 +20,10 @@ docker-compose build
 ```bash
 docker-compose up
 ```
-4. Open a web browser and go to http://localhost:3000
+4. Open a web browser and go to `http://localhost:3000`
 
 ### Without Docker
-1. Navigate to project directory called my-app  
+1. Navigate to project directory called `my-app`  
 ```bash
 cd path/to/project/directory
 ```
@@ -46,7 +46,7 @@ npm start
 [nodemon] watching extensions: js,mjs,cjs,json
 [nodemon] starting `node index.js`
 Server is running on port 8000
-Database connected
+Connected to MongoDB
 ```
 4. In another terminal tab, navigate to project directory and client directory
 ```bash
@@ -68,7 +68,32 @@ npm run dev
  ✓ Starting...
  ✓ Ready in 1463ms
 ```
-6. Open a web browser and go to http://localhost:3000
+6. Open a web browser and go to `http://localhost:3000`
+
+## Viewing MongoDB Entries
+- To view local database `chat` entries Docker must be running
+
+1. Open terminal
+2. Locate container id of port 27017 
+```bash
+docker ps
+```
+3. Access database
+```bash
+docker exec -it [CONTAINER-ID] mongosh
+```
+4. Switch to `chat` database
+```bash
+use chat
+```
+5. View `users` collection
+```bash
+db.users.find().pretty()
+```
+6. View `messages` collection
+```bash
+db.messages.find().pretty()
+```
 
 ## Notes
 - Refreshing chat pages will close/hinder the connection

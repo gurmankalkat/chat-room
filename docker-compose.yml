@@ -21,7 +21,16 @@ services:
       - ./server:/usr/src/app
     environment:
       - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/chat
+    depends_on:
+      - mongo
 
-networks:
-  default:
-    driver: bridge
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

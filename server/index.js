@@ -9,12 +9,12 @@ const MessageModel = require("./models/message");
 
 const app = express();
 
+const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/chat';
+
 // Database connection
-mongoose.connect(process.env.MONGO_URL).then(() => {
-  console.log("Database connected");
-}).catch((err) => {
-  console.log(err);
-});
+mongoose.connect(uri)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Error connecting to MongoDB:', err));
 
 // Middleware
 app.use(cors({
