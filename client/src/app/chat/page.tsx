@@ -21,6 +21,8 @@ export default function Chat() {
     const [onlinePeople, setOnlinePeople] = useState<Set<string>>(new Set());
     const [newMessage, setNewMessage] = useState<string>("");
     const [messages, setMessages] = useState<{ _id: string; sender: string; text: string; upvotes: number; downvotes: number; }[]>([]);
+    // var for the only user I want to send a message to
+    // const [selectedPerson, setSelectedPerson] = useState<string>("");
     
 
     useEffect(() => {
@@ -88,6 +90,21 @@ export default function Chat() {
             setMessages(prev => ([...prev, {_id: Date.now().toString(), sender: username || '', text: newMessage, upvotes: 0, downvotes: 0}]));
             setNewMessage("");
         }
+        /*
+        if (ws && newMessage.trim()) { 
+            ws.send(JSON.stringify({ text: newMessage, recipient: selectedPerson.trim() }));
+            setMessages(prev => ([...prev, {
+                _id: Date.now().toString(),
+                sender: username || '',
+                selectedPerson: recipient.trim(), 
+                text: newMessage,
+                upvotes: 0,
+                downvotes: 0
+            }]));
+            setNewMessage("");
+            setSelectedPerson(""); 
+        }
+        */
     }
 
 

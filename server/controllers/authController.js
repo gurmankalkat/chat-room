@@ -62,7 +62,7 @@ const loginUser = async (req, res) => {
     const payload = { id: user._id, username: user.username };
 
     jwt.sign(payload, process.env.JWT_SECRET, {}, (err, token) => {
-      if (err) {s
+      if (err) {
         return res.status(500).json({ error: "JWT signing error" });
       }
       res.cookie("token", token, {
