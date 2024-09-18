@@ -1,9 +1,8 @@
-A simple chat room application using React, TypeScript, JavaScript, MongoDB, and Docker+Docker Compose. Users can see who is online and send group messages.
+A simple chat room application using React, TypeScript, JavaScript, MongoDB, and Docker+Docker Compose.
 
 ## Running Program
-* Used Mac
+* Run npm install in `server` and `client` folder before starting application
 * To see 2+ users having a conversation, open a web browser window for each user that wants to chat and go to http://localhost:3000 in each window to send chats in real time
-  - See video in project directory for details
 
 ### With Docker
 1. Open Docker Desktop
