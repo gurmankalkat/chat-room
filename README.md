@@ -1,5 +1,4 @@
-# Nimble Challenge
-A simple chat room application using React, TypeScript, JavaScript, MongoDB, and Docker+Docker Compose.
+A simple chat room application using React, TypeScript, JavaScript, MongoDB, and Docker+Docker Compose. Users can see who is online and send group messages.
 
 ## Running Program
 * Used Mac
